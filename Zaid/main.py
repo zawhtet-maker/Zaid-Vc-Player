@@ -8,13 +8,16 @@ from pytgcalls import idle
 from pytgcalls import PyTgCalls
 from Zaid.Database.clientdb import get_assistant, save_assistant
 
+# Timezone သတ်မှတ်ပါ
+os.environ['TZ'] = 'Asia/Yangon'
+
 bot = Client(
     ":memory:",
     API_ID,
     API_HASH,
     bot_token=BOT_TOKEN,
     plugins={"root": "Zaid.Player"},
-    sleep_threshold=30,
+    sleep_threshold=60,  # 30 ကနေ 60 ကိုပြောင်းပါ
     workers=4
 )
 
@@ -76,41 +79,81 @@ random_assistant = []
 
 async def start_bot():
     print("[INFO]: STARTING BOT CLIENT")
-    await bot.start()
+    
+    # Retry logic with timeout
+    max_retries = 5
+    for i in range(max_retries):
+        try:
+            await asyncio.wait_for(bot.start(), timeout=30)
+            print(f"[INFO]: Bot started successfully on attempt {i+1}")
+            break
+        except asyncio.TimeoutError:
+            print(f"[WARN]: Bot start timeout, retrying... ({i+1}/{max_retries})")
+            await asyncio.sleep(10)
+        except Exception as e:
+            if "BadMsgNotification" in str(e) or "sync" in str(e).lower():
+                print(f"[WARN]: Time sync error, retrying... ({i+1}/{max_retries})")
+                await asyncio.sleep(10)
+            else:
+                print(f"[ERROR]: Unexpected error: {e}")
+                if i == max_retries - 1:
+                    raise e
+                await asyncio.sleep(10)
     
     global me_bot
     me_bot = bot.get_me()
     print(f"[INFO]: Bot started as @{me_bot.username}")
     
+    # Assistant clients start
     if SESSION_NAME != "None" and ASS_CLI_1:
-       await Test.start()
-       if call_py:
-           await call_py.start()
-       random_assistant.append(1)
+       try:
+           await Test.start()
+           if call_py:
+               await call_py.start()
+           random_assistant.append(1)
+           print("[INFO]: Assistant 1 started")
+       except Exception as e:
+           print(f"[WARN]: Assistant 1 failed to start: {e}")
        
     if SESSION2 != "None" and user:
-       await user.start()
-       if call_py2:
-           await call_py2.start()
-       random_assistant.append(2)
+       try:
+           await user.start()
+           if call_py2:
+               await call_py2.start()
+           random_assistant.append(2)
+           print("[INFO]: Assistant 2 started")
+       except Exception as e:
+           print(f"[WARN]: Assistant 2 failed to start: {e}")
        
     if SESSION3 != "None" and user3:
-       await user3.start()
-       if call_py3:
-           await call_py3.start()
-       random_assistant.append(3)
+       try:
+           await user3.start()
+           if call_py3:
+               await call_py3.start()
+           random_assistant.append(3)
+           print("[INFO]: Assistant 3 started")
+       except Exception as e:
+           print(f"[WARN]: Assistant 3 failed to start: {e}")
        
     if SESSION4 != "None" and user4:
-       await user4.start()
-       if call_py4:
-           await call_py4.start()
-       random_assistant.append(4)
+       try:
+           await user4.start()
+           if call_py4:
+               await call_py4.start()
+           random_assistant.append(4)
+           print("[INFO]: Assistant 4 started")
+       except Exception as e:
+           print(f"[WARN]: Assistant 4 failed to start: {e}")
        
     if SESSION5 != "None" and user5:
-       await user5.start()
-       if call_py5:
-           await call_py5.start()
-       random_assistant.append(5)
+       try:
+           await user5.start()
+           if call_py5:
+               await call_py5.start()
+           random_assistant.append(5)
+           print("[INFO]: Assistant 5 started")
+       except Exception as e:
+           print(f"[WARN]: Assistant 5 failed to start: {e}")
        
     random_assistant.append(6)
     print("[INFO]: Your Bot Has been Started")
