@@ -17,8 +17,10 @@ bot = Client(
     API_HASH,
     bot_token=BOT_TOKEN,
     plugins={"root": "Zaid.Player"},
-    sleep_threshold=60,  # 30 ကနေ 60 ကိုပြောင်းပါ
-    workers=4
+    sleep_threshold=120,  # 60 ကနေ 120 ကိုပြောင်းပါ
+    workers=4,
+    app_version="1.0.0",
+    device_model="Railway"
 )
 
 if not SESSION_NAME:
