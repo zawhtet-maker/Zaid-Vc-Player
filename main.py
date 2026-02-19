@@ -128,7 +128,7 @@ async def start_bot():
                     break
             except Exception as e:
                 print(f"[WARN]: get_me attempt {j+1}/3 failed: {e}")
-                if j < 2:  # နောက်ဆုံးအကြိမ်မဟုတ်ရင်
+                if j < 2:
                     await asyncio.sleep(5)
         
         if me_bot:
@@ -141,6 +141,8 @@ async def start_bot():
         me_bot = None
     
     # Assistant clients start (continue even if some fail)
+    assistant_count = 0
+    
     if SESSION_NAME != "None" and ASS_CLI_1:
        try:
            if not Test.is_connected:
@@ -148,6 +150,7 @@ async def start_bot():
            if call_py:
                await call_py.start()
            random_assistant.append(1)
+           assistant_count += 1
            print("[INFO]: Assistant 1 started")
        except Exception as e:
            print(f"[WARN]: Assistant 1 failed to start: {e}")
@@ -159,6 +162,7 @@ async def start_bot():
            if call_py2:
                await call_py2.start()
            random_assistant.append(2)
+           assistant_count += 1
            print("[INFO]: Assistant 2 started")
        except Exception as e:
            print(f"[WARN]: Assistant 2 failed to start: {e}")
@@ -170,6 +174,7 @@ async def start_bot():
            if call_py3:
                await call_py3.start()
            random_assistant.append(3)
+           assistant_count += 1
            print("[INFO]: Assistant 3 started")
        except Exception as e:
            print(f"[WARN]: Assistant 3 failed to start: {e}")
@@ -181,6 +186,7 @@ async def start_bot():
            if call_py4:
                await call_py4.start()
            random_assistant.append(4)
+           assistant_count += 1
            print("[INFO]: Assistant 4 started")
        except Exception as e:
            print(f"[WARN]: Assistant 4 failed to start: {e}")
@@ -192,12 +198,21 @@ async def start_bot():
            if call_py5:
                await call_py5.start()
            random_assistant.append(5)
+           assistant_count += 1
            print("[INFO]: Assistant 5 started")
        except Exception as e:
            print(f"[WARN]: Assistant 5 failed to start: {e}")
        
     random_assistant.append(6)
+    
+    print(f"[INFO]: Total assistants started: {assistant_count}")
     print("[INFO]: Your Bot Has been Started")
+    print("[INFO]: Entering idle state...")
+    
+    # Idle မသွားခင် ခဏစောင့်ပါ
+    await asyncio.sleep(2)
+    
+    # Pyrogram idle ကိုသုံးမယ်
     await idle()
 
 def init_db():
