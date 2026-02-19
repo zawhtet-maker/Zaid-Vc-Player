@@ -1,8 +1,7 @@
 FROM python:3.10-slim-bullseye
 
-# NTP နဲ့ date sync လုပ်ဖို့ထည့်ပါ
-RUN apt-get update && apt-get install -y ffmpeg git ntpdate && \
-    ntpdate -u pool.ntp.org && \
+# ntpdate ကိုဖြုတ်လိုက်ပါ
+RUN apt-get update && apt-get install -y ffmpeg git && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
