@@ -14,19 +14,20 @@ bot = Client(
     API_HASH,
     bot_token=BOT_TOKEN,
     plugins={"root": "Zaid.Player"},
+    sleep_threshold=30,
+    workers=4
 )
 
-# Assistant clients
 if not SESSION_NAME:
    ASS_CLI_1 = None
 else:   
    ASS_CLI_1 = Client(SESSION_NAME, api_id=API_ID, api_hash=API_HASH)
-
+   
 if not SESSION2:
    user = None
 else:
    user = Client(SESSION2, api_id=API_ID, api_hash=API_HASH)
-
+   
 if not SESSION3:
    user3 = None
 else:
@@ -36,15 +37,11 @@ if not SESSION4:
    user4 = None
 else:
    user4 = Client(SESSION4, api_id=API_ID, api_hash=API_HASH)
-
+   
 if not SESSION5:
    user5 = None
 else:
    user5 = Client(SESSION5, api_id=API_ID, api_hash=API_HASH)
-
-# ဒီအောက်က ":umm:" ဆိုတဲ့ Client ကိုဖျက်ပစ်လိုက်ပါ
-# with Client(":umm:", API_ID, API_HASH, bot_token=BOT_TOKEN) as app:
-#    me_bot = app.get_me()
 
 Test = ASS_CLI_1
 ASS_CLI_2 = user
@@ -81,7 +78,6 @@ async def start_bot():
     print("[INFO]: STARTING BOT CLIENT")
     await bot.start()
     
-    # Bot info ကိုရယူပါ
     global me_bot
     me_bot = bot.get_me()
     print(f"[INFO]: Bot started as @{me_bot.username}")
@@ -91,26 +87,31 @@ async def start_bot():
        if call_py:
            await call_py.start()
        random_assistant.append(1)
+       
     if SESSION2 != "None" and user:
        await user.start()
        if call_py2:
            await call_py2.start()
        random_assistant.append(2)
+       
     if SESSION3 != "None" and user3:
        await user3.start()
        if call_py3:
            await call_py3.start()
        random_assistant.append(3)
+       
     if SESSION4 != "None" and user4:
        await user4.start()
        if call_py4:
            await call_py4.start()
        random_assistant.append(4)
+       
     if SESSION5 != "None" and user5:
        await user5.start()
        if call_py5:
            await call_py5.start()
        random_assistant.append(5)
+       
     random_assistant.append(6)
     print("[INFO]: Your Bot Has been Started")
     await idle()
