@@ -17,7 +17,7 @@ bot = Client(
     API_HASH,
     bot_token=BOT_TOKEN,
     plugins={"root": "Zaid.Player"},
-    sleep_threshold=120,  # 60 ကနေ 120 ကိုပြောင်းပါ
+    sleep_threshold=120,
     workers=4,
     app_version="1.0.0",
     device_model="Railway"
@@ -82,31 +82,41 @@ random_assistant = []
 async def start_bot():
     print("[INFO]: STARTING BOT CLIENT")
     
-    # Retry logic with timeout
+    # Retry logic without raising exception
     max_retries = 5
+    bot_started = False
+    
     for i in range(max_retries):
         try:
             await asyncio.wait_for(bot.start(), timeout=30)
             print(f"[INFO]: Bot started successfully on attempt {i+1}")
+            bot_started = True
             break
         except asyncio.TimeoutError:
             print(f"[WARN]: Bot start timeout, retrying... ({i+1}/{max_retries})")
             await asyncio.sleep(10)
         except Exception as e:
-            if "BadMsgNotification" in str(e) or "sync" in str(e).lower():
-                print(f"[WARN]: Time sync error, retrying... ({i+1}/{max_retries})")
-                await asyncio.sleep(10)
-            else:
-                print(f"[ERROR]: Unexpected error: {e}")
-                if i == max_retries - 1:
-                    raise e
-                await asyncio.sleep(10)
+            print(f"[WARN]: Bot start error: {e}")
+            await asyncio.sleep(10)
     
-    global me_bot
-    me_bot = bot.get_me()
-    print(f"[INFO]: Bot started as @{me_bot.username}")
+    if not bot_started:
+        print("[ERROR]: Bot could not start after all retries")
+        return
     
-    # Assistant clients start
+    # Bot info ကိုရယူပါ (with error handling)
+    try:
+        global me_bot
+        me_bot = bot.get_me()
+        if me_bot:
+            print(f"[INFO]: Bot started as @{me_bot.username}")
+        else:
+            print("[WARN]: Could not get bot info")
+            me_bot = None
+    except Exception as e:
+        print(f"[WARN]: Failed to get bot info: {e}")
+        me_bot = None
+    
+    # Assistant clients start (continue even if some fail)
     if SESSION_NAME != "None" and ASS_CLI_1:
        try:
            await Test.start()
