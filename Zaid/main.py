@@ -82,26 +82,39 @@ random_assistant = []
 async def start_bot():
     print("[INFO]: STARTING BOT CLIENT")
     
-    # Retry logic without raising exception
-    max_retries = 5
-    bot_started = False
-    
-    for i in range(max_retries):
-        try:
-            await asyncio.wait_for(bot.start(), timeout=30)
-            print(f"[INFO]: Bot started successfully on attempt {i+1}")
-            bot_started = True
-            break
-        except asyncio.TimeoutError:
-            print(f"[WARN]: Bot start timeout, retrying... ({i+1}/{max_retries})")
-            await asyncio.sleep(10)
-        except Exception as e:
-            print(f"[WARN]: Bot start error: {e}")
-            await asyncio.sleep(10)
-    
-    if not bot_started:
-        print("[ERROR]: Bot could not start after all retries")
-        return
+    # Bot က run နေပြီးသားလားစစ်ပါ
+    try:
+        if bot.is_connected:
+            print("[INFO]: Bot is already connected")
+        else:
+            # Retry logic without raising exception
+            max_retries = 5
+            bot_started = False
+            
+            for i in range(max_retries):
+                try:
+                    await asyncio.wait_for(bot.start(), timeout=30)
+                    print(f"[INFO]: Bot started successfully on attempt {i+1}")
+                    bot_started = True
+                    break
+                except asyncio.TimeoutError:
+                    print(f"[WARN]: Bot start timeout, retrying... ({i+1}/{max_retries})")
+                    await asyncio.sleep(10)
+                except Exception as e:
+                    if "already connected" in str(e).lower():
+                        print("[INFO]: Bot is already connected")
+                        bot_started = True
+                        break
+                    else:
+                        print(f"[WARN]: Bot start error: {e}")
+                        await asyncio.sleep(10)
+            
+            if not bot_started:
+                print("[ERROR]: Bot could not start after all retries")
+                return
+    except Exception as e:
+        print(f"[WARN]: Error checking bot connection: {e}")
+        # Continue anyway
     
     # Bot info ကိုရယူပါ (with error handling)
     try:
@@ -119,7 +132,8 @@ async def start_bot():
     # Assistant clients start (continue even if some fail)
     if SESSION_NAME != "None" and ASS_CLI_1:
        try:
-           await Test.start()
+           if not Test.is_connected:
+               await Test.start()
            if call_py:
                await call_py.start()
            random_assistant.append(1)
@@ -129,7 +143,8 @@ async def start_bot():
        
     if SESSION2 != "None" and user:
        try:
-           await user.start()
+           if not user.is_connected:
+               await user.start()
            if call_py2:
                await call_py2.start()
            random_assistant.append(2)
@@ -139,7 +154,8 @@ async def start_bot():
        
     if SESSION3 != "None" and user3:
        try:
-           await user3.start()
+           if not user3.is_connected:
+               await user3.start()
            if call_py3:
                await call_py3.start()
            random_assistant.append(3)
@@ -149,7 +165,8 @@ async def start_bot():
        
     if SESSION4 != "None" and user4:
        try:
-           await user4.start()
+           if not user4.is_connected:
+               await user4.start()
            if call_py4:
                await call_py4.start()
            random_assistant.append(4)
@@ -159,7 +176,8 @@ async def start_bot():
        
     if SESSION5 != "None" and user5:
        try:
-           await user5.start()
+           if not user5.is_connected:
+               await user5.start()
            if call_py5:
                await call_py5.start()
            random_assistant.append(5)
