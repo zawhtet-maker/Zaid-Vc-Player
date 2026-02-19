@@ -1,6 +1,10 @@
 FROM python:3.10-slim-bullseye
 
-# ntpdate ကိုဖြုတ်လိုက်ပါ
+# Timezone ထည့်ပါ (Asia/Yangon)
+ENV TZ=Asia/Yangon
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# ffmpeg နဲ့ git ကိုထည့်ပါ
 RUN apt-get update && apt-get install -y ffmpeg git && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
